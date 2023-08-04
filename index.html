@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Air Quality</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+    <div id="splashScreen">
+        <img src="img/welcome.png" alt="welcome banner" />
+        <div style="display: flex;">
+            <button id="proceedWithoutFullscreen">Proceed</button>
+            <button id="goFullscreen">Go FullScreen</button>
+        </div>
+    </div>
+        
+
+
+    <div class="container">
+
+        <div class="box pm-box" id="bedroom">
+            <span class="boxLabel" id="bedroomLabel"></span>
+            <div class="boxLabel">bedroom</div>
+            <span id="bedroomValue" class="value"></span>
+            <span id="bedroomPM25Value" class="value-small"></span>
+        </div>
+
+        <div class="box" id="voc">
+            <span class="boxLabel" id="vocLabel">Bedroom VOC</span>
+            <span id="vocValue" class="value"></span>
+        </div>
+
+        <div class="box pm-box" id="nurseryPM">
+            <span class="boxLabel" id="nurseryPMLabel"></span>
+            <div class="boxLabel">nursery</div>
+            <span id="nurseryPMValue" class="value"></span>
+            <span id="nurseryPM25Value" class="value-small"></span>
+        </div>
+
+        <div class="box" id="nurseryVOC"><span class="boxLabel" id="nurseryVOCLabel">Nursery VOC</span><span
+                id="nurseryVOCValue" class="value"></span></div>
+
+        <div class="box pm-box" id="outdoor"
+            onclick="window.location='https://map.purpleair.com/1/mAQI/a10/p604800/cC0#9/39.2302/-77.275';">
+            <div class="diagonal-container">
+                <div class="value-container">
+                    <div class="boxLabel">outdoor</div>
+                    <span class="boxLabel" id="outdoorLabel">
+
+                    </span>
+                    <span id="outdoorValue" class="value"></span>
+                </div>
+                <div class="value-container">
+                    <span class="boxLabel"></span>
+                    <span id="outdoorPM25Value" class="value-small"></span>
+                </div>
+            </div>
+        </div>
+
+
+
+        <div class="box" id="weather">
+            <span id="temperature" class="value">Temperature: </span>
+            <span id="humidity" class="value">Humidity: </span>
+        </div>
+    </div>
+    <div class="version">version 1.0</div>
+    <script src="js/script.js"></script
+</body>
+
+</html>

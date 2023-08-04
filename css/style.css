@@ -1,0 +1,115 @@
+#splashScreen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    width: 100vw;
+}
+
+.version {
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    font-size: 10px;
+    font-family: consolas;
+    color: #ffffff;
+}
+
+body {
+    background-color: #000000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 0;
+    padding: 20px;
+}
+
+.column {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    justify-content: space-between;
+}
+
+.container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 480px;
+    margin-bottom: 20px;
+}
+
+.box {
+    width: calc(50% - 5px);
+    height: 150px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    border: 1px solid black;
+    font-size: 18px;
+    margin-bottom: 10px;
+    border-radius: 10px;
+}
+
+.box:last-child {
+    margin-bottom: 0;
+}
+
+.value {
+    font-size: 48px;
+    font-weight: bold;
+}
+
+.value-small {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+
+.boxLabel {
+    font-size: 10px;
+    font-family: consolas;
+}
+
+#goFullscreen, #proceedWithoutFullscreen {
+    background-color: #000;
+    border: 2px solid #fff;
+    color: #fff;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+
+#goFullscreen:hover, #proceedWithoutFullscreen:hover {
+    background-color: #444;
+}
+
+#splashScreen {
+    position: fixed; /* Add this */
+    top: 0; /* Add this */
+    left: 0; /* Add this */
+    background-color: #000; /* Add this to match the body background color */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    width: 100vw;
+    z-index: 1000; /* Add this to ensure it's above everything else */
+}
+
+#splashScreen > div > button {
+    margin: 5px; /* Optional: Add some spacing between the buttons */
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+}
