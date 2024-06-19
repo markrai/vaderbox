@@ -17,11 +17,8 @@
             <button id="goFullscreen">Go FullScreen</button>
         </div>
     </div>
-        
-
 
     <div class="container">
-
         <div class="box pm-box" id="bedroom">
             <span class="boxLabel" id="bedroomLabel"></span>
             <div class="boxLabel">bedroom</div>
@@ -41,17 +38,29 @@
             <span id="nurseryPM25Value" class="value-small"></span>
         </div>
 
-        <div class="box" id="nurseryVOC"><span class="boxLabel" id="nurseryVOCLabel">Nursery VOC</span><span
-                id="nurseryVOCValue" class="value"></span></div>
+        <div class="box" id="nurseryVOC">
+            <span class="boxLabel" id="nurseryVOCLabel">Nursery VOC</span>
+            <span id="nurseryVOCValue" class="value"></span>
+        </div>
 
-        <div class="box pm-box" id="outdoor"
-            onclick="window.location='https://map.purpleair.com/1/mAQI/a10/p604800/cC0#9/39.2302/-77.275';">
+        <!-- New rec room data row -->
+        <div class="box pm-box" id="recroomPM">
+            <span class="boxLabel" id="recroomPMLabel"></span>
+            <div class="boxLabel">rec room</div>
+            <span id="recroomPMValue" class="value"></span>
+            <span id="recroomPM25Value" class="value-small"></span>
+        </div>
+
+        <div class="box" id="recroomVOC">
+            <span class="boxLabel" id="recroomVOCLabel">Rec Room VOC</span>
+            <span id="recroomVOCValue" class="value"></span>
+        </div>
+
+        <div class="box pm-box" id="outdoor" onclick="window.location='https://map.purpleair.com/1/mAQI/a10/p604800/cC0#9/39.2302/-77.275';">
             <div class="diagonal-container">
                 <div class="value-container">
                     <div class="boxLabel">outdoor</div>
-                    <span class="boxLabel" id="outdoorLabel">
-
-                    </span>
+                    <span class="boxLabel" id="outdoorLabel"></span>
                     <span id="outdoorValue" class="value"></span>
                 </div>
                 <div class="value-container">
@@ -61,15 +70,14 @@
             </div>
         </div>
 
-
-
         <div class="box" id="weather">
             <span id="temperature" class="value">Temperature: </span>
             <span id="humidity" class="value">Humidity: </span>
         </div>
     </div>
-    <div class="version">version 1.0</div>
-    <script src="js/script.js"></script
+
+    <div class="version">version 1.1</div>
+    <script src="js/script.js"></script>
 </body>
 
 </html>

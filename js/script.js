@@ -20,18 +20,18 @@ document.getElementById('proceedWithoutFullscreen').addEventListener('click', fu
     document.getElementById('splashScreen').style.display = 'none'; // hide the splash screen
 });
 
-
 // PurpleAir Sensors
 const outdoorDataURL = '';
 const bedroomDataURL = '';
 const nurseryDataURL = '';
+const recroomDataURL = '';
 
 // Weather service configuration
 const weatherAPIKey = '';
 const city = '';
 const state = '';
 const country = '';
- const units = '';
+const units = '';
 
 // Fetch data from a URL
 const fetchData = async url => {
@@ -65,11 +65,8 @@ const fetchWeather = async (city, state, country, apiKey, units) => {
 
 // Display weather information
 const displayWeather = async () => {
-
-    // Call the fetchWeather function to populate the weather container
     const weatherData = await fetchWeather(city, state, country, weatherAPIKey, units);
 
-    // Update the weather display
     if (weatherData.cod === '429') {
         document.getElementById('temperature').textContent = 'Quota exceeded';
         document.getElementById('humidity').textContent = '';
@@ -103,8 +100,9 @@ const displayResults = async () => {
         const outdoorPromise = fetchData(outdoorDataURL);
         const bedroomPromise = fetchData(bedroomDataURL);
         const nurseryPromise = fetchData(nurseryDataURL);
+        const recroomPromise = fetchData(recroomDataURL); // New promise for rec room data
 
-        const [outdoorData, bedroomData, nurseryData] = await Promise.all([
+        const [outdoorData, bedroomData, nurseryData, recroomData] = await Promise.all([
             outdoorPromise.catch(error => {
                 console.error('Error fetching outdoor data:', error);
                 return null; // Return null if the request fails
@@ -116,9 +114,12 @@ const displayResults = async () => {
             nurseryPromise.catch(error => {
                 console.error('Error fetching nursery data:', error);
                 return null; // Return null if the request fails
+            }),
+            recroomPromise.catch(error => {
+                console.error('Error fetching rec room data:', error);
+                return null; // Return null if the request fails
             })
         ]);
-
 
         if (outdoorData) {
             const outdoorAvgValue = (outdoorData.p_0_3_um + outdoorData.p_0_3_um_b) / 2;
@@ -131,10 +132,7 @@ const displayResults = async () => {
             outdoorElement.style.backgroundColor = outdoorAvgValue < 300 ? 'LIGHTGREEN' : outdoorAvgValue <= 1000 ? 'orange' : 'red';
         }
 
-
         if (bedroomData) {
-
-
             document.getElementById('bedroomValue').textContent = Math.round(bedroomData.p_0_3_um);
             document.getElementById('bedroomPM25Value').textContent = `${Math.round(bedroomData.p_2_5_um)}`;
             document.getElementById('vocValue').textContent = Math.round(bedroomData.gas_680);
@@ -157,11 +155,22 @@ const displayResults = async () => {
             nurseryPMElement.style.backgroundColor = nurseryData.p_0_3_um < 300 ? 'LIGHTGREEN' : nurseryData.p_0_3_um <= 500 ? 'orange' : 'red';
             nurseryVOCElement.style.backgroundColor = nurseryData.gas_680 < 60 ? 'LIGHTGREEN' : nurseryData.gas_680 <= 99 ? 'orange' : 'red';
         }
+
+        if (recroomData) {
+            document.getElementById('recroomPMValue').textContent = Math.round(recroomData.p_0_3_um);
+            document.getElementById('recroomPM25Value').textContent = `${Math.round(recroomData.p_2_5_um)}`;
+            document.getElementById('recroomVOCValue').textContent = Math.round(recroomData.gas_680);
+
+            const recroomPMElement = document.getElementById('recroomPM');
+            const recroomVOCElement = document.getElementById('recroomVOC');
+
+            recroomPMElement.style.backgroundColor = recroomData.p_0_3_um < 300 ? 'LIGHTGREEN' : recroomData.p_0_3_um <= 500 ? 'orange' : 'red';
+            recroomVOCElement.style.backgroundColor = recroomData.gas_680 < 60 ? 'LIGHTGREEN' : recroomData.gas_680 <= 99 ? 'orange' : 'red';
+        }
     } catch (error) {
         console.error('Error fetching data:', error);
     }
 }
-
 
 // Initial display of data
 displayResults();
