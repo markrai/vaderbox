@@ -21,10 +21,10 @@ document.getElementById('proceedWithoutFullscreen').addEventListener('click', fu
 });
 
 // PurpleAir Sensors
-const outdoorDataURL = '';
-const bedroomDataURL = '';
-const nurseryDataURL = '';
-const recroomDataURL = '';
+const outdoorDataURL = 'http://192.168.1.180/json';
+const bedroomDataURL = 'http://192.168.1.165/json';
+const nurseryDataURL = 'http://192.168.1.219/json';
+const recroomDataURL = 'http://192.168.1.151/json';
 
 // Weather service configuration
 const weatherAPIKey = '';
@@ -41,6 +41,7 @@ const fetchData = async url => {
         return await response.json();
     } catch (error) {
         console.error('There was a problem with the fetch operation:', error);
+        return null;
     }
 }
 
@@ -60,6 +61,7 @@ const fetchWeather = async (city, state, country, apiKey, units) => {
         }
     } catch (error) {
         console.error('Error:', error);
+        return null;
     }
 }
 
@@ -67,10 +69,10 @@ const fetchWeather = async (city, state, country, apiKey, units) => {
 const displayWeather = async () => {
     const weatherData = await fetchWeather(city, state, country, weatherAPIKey, units);
 
-    if (weatherData.cod === '429') {
+    if (weatherData && weatherData.quotaExceeded) {
         document.getElementById('temperature').textContent = 'Quota exceeded';
         document.getElementById('humidity').textContent = '';
-    } else {
+    } else if (weatherData) {
         const temperature = Math.round(weatherData?.main?.temp);
         const humidity = weatherData?.main?.humidity;
 
@@ -91,6 +93,9 @@ const displayWeather = async () => {
                                                 humidity <= 95 ? '#1ac6ff' : '#00bfff';
 
         weatherElement.style.backgroundColor = backgroundColor;
+    } else {
+        document.getElementById('temperature').textContent = '';
+        document.getElementById('humidity').textContent = '';
     }
 }
 
@@ -121,54 +126,61 @@ const displayResults = async () => {
             })
         ]);
 
-        if (outdoorData) {
-            const outdoorAvgValue = (outdoorData.p_0_3_um + outdoorData.p_0_3_um_b) / 2;
-            document.getElementById('outdoorValue').textContent = Math.round(outdoorAvgValue);
-
-            const avgPM25Outdoor = (Number(outdoorData.p_2_5_um) + Number(outdoorData.p_2_5_um_b)) / 2;
-            document.getElementById('outdoorPM25Value').textContent = `${Math.round(avgPM25Outdoor)}`;
-
-            const outdoorElement = document.getElementById('outdoor');
-            outdoorElement.style.backgroundColor = outdoorAvgValue < 300 ? 'LIGHTGREEN' : outdoorAvgValue <= 1000 ? 'orange' : 'red';
-        }
-
-        if (bedroomData) {
-            document.getElementById('bedroomValue').textContent = Math.round(bedroomData.p_0_3_um);
-            document.getElementById('bedroomPM25Value').textContent = `${Math.round(bedroomData.p_2_5_um)}`;
-            document.getElementById('vocValue').textContent = Math.round(bedroomData.gas_680);
-
-            const bedroomElement = document.getElementById('bedroom');
-            const vocElement = document.getElementById('voc');
-
-            bedroomElement.style.backgroundColor = bedroomData.p_0_3_um < 300 ? 'LIGHTGREEN' : bedroomData.p_0_3_um <= 500 ? 'orange' : 'red';
-            vocElement.style.backgroundColor = bedroomData.gas_680 < 60 ? 'LIGHTGREEN' : bedroomData.gas_680 <= 99 ? 'orange' : 'red';
-        }
-
-        if (nurseryData) {
-            document.getElementById('nurseryPMValue').textContent = Math.round(nurseryData.p_0_3_um);
-            document.getElementById('nurseryPM25Value').textContent = `${Math.round(nurseryData.p_2_5_um)}`;
-            document.getElementById('nurseryVOCValue').textContent = Math.round(nurseryData.gas_680);
-
-            const nurseryPMElement = document.getElementById('nurseryPM');
-            const nurseryVOCElement = document.getElementById('nurseryVOC');
-
-            nurseryPMElement.style.backgroundColor = nurseryData.p_0_3_um < 300 ? 'LIGHTGREEN' : nurseryData.p_0_3_um <= 500 ? 'orange' : 'red';
-            nurseryVOCElement.style.backgroundColor = nurseryData.gas_680 < 60 ? 'LIGHTGREEN' : nurseryData.gas_680 <= 99 ? 'orange' : 'red';
-        }
-
-        if (recroomData) {
-            document.getElementById('recroomPMValue').textContent = Math.round(recroomData.p_0_3_um);
-            document.getElementById('recroomPM25Value').textContent = `${Math.round(recroomData.p_2_5_um)}`;
-            document.getElementById('recroomVOCValue').textContent = Math.round(recroomData.gas_680);
-
-            const recroomPMElement = document.getElementById('recroomPM');
-            const recroomVOCElement = document.getElementById('recroomVOC');
-
-            recroomPMElement.style.backgroundColor = recroomData.p_0_3_um < 300 ? 'LIGHTGREEN' : recroomData.p_0_3_um <= 500 ? 'orange' : 'red';
-            recroomVOCElement.style.backgroundColor = recroomData.gas_680 < 60 ? 'LIGHTGREEN' : recroomData.gas_680 <= 99 ? 'orange' : 'red';
-        }
+        updateBox('outdoor', outdoorData);
+        updateBox('bedroom', bedroomData, 'voc');
+        updateBox('nurseryPM', nurseryData, 'nurseryVOC');
+        updateBox('recroomPM', recroomData, 'recroomVOC');
     } catch (error) {
         console.error('Error fetching data:', error);
+    }
+}
+
+const updateBox = (id, data, vocId = null) => {
+    const pmElement = document.getElementById(id);
+    const pmValueElement = pmElement.querySelector('.value');
+    const pm25ValueElement = pmElement.querySelector('.value-small');
+
+    if (data && !isNaN(data.p_0_3_um) && !isNaN(data.p_2_5_um)) {
+        pmValueElement.textContent = Math.round(data.p_0_3_um);
+        pm25ValueElement.textContent = Math.round(data.p_2_5_um);
+
+        pmElement.style.backgroundColor = getBackgroundColor(Math.round(data.p_0_3_um));
+
+        if (vocId && !isNaN(data.gas_680)) {
+            const vocElement = document.getElementById(vocId);
+            const vocValueElement = vocElement.querySelector('.value');
+
+            vocValueElement.textContent = Math.round(data.gas_680);
+            vocElement.style.backgroundColor = getBackgroundColor(Math.round(data.gas_680), 'voc');
+        } else if (vocId) {
+            const vocElement = document.getElementById(vocId);
+            const vocValueElement = vocElement.querySelector('.value');
+
+            vocValueElement.textContent = '';
+            vocElement.style.backgroundColor = 'grey';
+        }
+    } else {
+        pmValueElement.textContent = '';
+        pm25ValueElement.textContent = '';
+
+        pmElement.style.backgroundColor = 'grey';
+
+        if (vocId) {
+            const vocElement = document.getElementById(vocId);
+            const vocValueElement = vocElement.querySelector('.value');
+
+            vocValueElement.textContent = '';
+            vocElement.style.backgroundColor = 'grey';
+        }
+    }
+}
+
+const getBackgroundColor = (value, type = 'pm') => {
+    value = Math.floor(value); // Ensure consistent rounding
+    if (type === 'pm') {
+        return value < 300 ? 'LIGHTGREEN' : value <= 1000 ? 'orange' : 'red';
+    } else if (type === 'voc') {
+        return value < 60 ? 'LIGHTGREEN' : value <= 99 ? 'orange' : 'red';
     }
 }
 
